@@ -10,13 +10,18 @@ const isLoading = ref(true)
 const loadingProgress = ref(0)
 const loadingStatus = ref('Initialisation...')
 
+function setLoadingProgress(value: number) {
+  const num = Math.round(value)
+  loadingProgress.value = Math.max(0, Math.min(100, num))
+}
+
 let minLoadingDone = false
 let modelLoadingDone = false
 
 function checkLoadingComplete() {
   if (minLoadingDone && modelLoadingDone) {
     loadingStatus.value = 'Prêt !'
-    loadingProgress.value = 100
+    setLoadingProgress(100)
     setTimeout(() => { isLoading.value = false }, 500)
   }
 }
@@ -204,9 +209,9 @@ function loadCarModel() {
     },
     (xhr) => {
       if (xhr.lengthComputable) {
-        loadingProgress.value = Math.round((xhr.loaded / xhr.total) * 90)
+        setLoadingProgress(Math.round((xhr.loaded / xhr.total) * 90))
       } else {
-        loadingProgress.value = Math.min(loadingProgress.value + 5, 80)
+        setLoadingProgress(Math.min(loadingProgress.value + 5, 80))
       }
     },
     (error) => {
